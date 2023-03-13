@@ -2,13 +2,17 @@ from flask_restful import Resource
 from database.product_model import PRODUCTS
 from flask import jsonify, request
 from playhouse.shortcuts import model_to_dict
-
+from redis_db.connect_redis import r
 
 class Product(Resource):
     
     def get(self, product_id):
-        product = PRODUCTS.get(PRODUCTS.id == product_id)  
-        return jsonify({'data': model_to_dict(product)})
+        product_querry = PRODUCTS.get(PRODUCTS.id == product_id) 
+        product = model_to_dict(product_querry)
+        # Lưu thông tin vào Redis
+        r.set(f"product_{product_id}", str(product))
+
+        return jsonify({'data': product})
     
     
     def put(self, product_id):

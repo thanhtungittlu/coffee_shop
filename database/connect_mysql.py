@@ -1,12 +1,13 @@
 from peewee import *
+from config import config
 
 # Connect to a MySQL database on network.
 my_db = MySQLDatabase(
-    database = "coffee_store",
-    user='root', 
-    password='01032023',
-    host='127.0.0.1', 
-    port=3306, 
+    database = config.DATABASE,
+    user= config.USER_DATABASE, 
+    password= config.PASSWORD_DATABASE,
+    host= config.SERVER_DATABASE, 
+    port= int(config.PORT_DATABASE), 
 )
 
 
