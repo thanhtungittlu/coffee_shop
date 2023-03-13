@@ -18,10 +18,12 @@ class Product(Resource):
     def put(self, product_id):
         data = request.get_json()
         product = PRODUCTS.get(PRODUCTS.id == product_id)
+        
         product.name = data['name']
         product.price = data['price']
         product.coffee_origin = data['coffee_origin']
         product.save()
+
         return jsonify({'message': "Product update successfully", 'data': model_to_dict(product)})
 
     def delete(self, product_id):
