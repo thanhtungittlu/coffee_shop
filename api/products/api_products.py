@@ -3,14 +3,24 @@ from database.product_model import PRODUCTS
 from flask import jsonify, request
 from playhouse.shortcuts import model_to_dict
 from redis_db.connect_redis import r
+from config import config
+from kafka_object.producer import producer
 
 class Product(Resource):
     
     def get(self, product_id):
         product_querry = PRODUCTS.get(PRODUCTS.id == product_id) 
         product = model_to_dict(product_querry)
+
         # Lưu thông tin vào Redis
         r.set(f"product_{product_id}", str(product))
+        
+        
+        # Gửi thông tin vào topic kafka
+        producer.send(
+            config.TOPIC_KAFKA, r.get(f"product_{product_id}")
+        )
+
 
         return jsonify({'data': product})
     

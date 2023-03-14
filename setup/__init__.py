@@ -15,6 +15,11 @@ class Config():
         self.SERVER_REDIS = os.environ.get('SERVER_REDIS')
         self.PORT_REDIS = os.environ.get('PORT_REDIS')
 
+        
+        self.SERVER_KAFKA = os.environ.get('SERVER_KAFKA')
+        self.PORT_KAFKA = os.environ.get('PORT_KAFKA')
+        self.TOPIC_KAFKA = os.environ.get('TOPIC_KAFKA')
+
 def load_config():
     try:
         config = Config()
