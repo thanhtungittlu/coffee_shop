@@ -16,7 +16,7 @@ class Product(Resource):
         r.set(f"product_{product_id}", str(product))
         
         
-        # Gửi thông tin vào topic kafka
+        # # Gửi thông tin vào topic kafka
         producer.send(
             config.TOPIC_KAFKA, r.get(f"product_{product_id}")
         )
