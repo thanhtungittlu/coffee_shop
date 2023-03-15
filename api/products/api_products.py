@@ -5,6 +5,9 @@ from playhouse.shortcuts import model_to_dict
 from redis_db.connect_redis import r
 from config import config
 from kafka_object.producer import producer
+from loguru import logger
+import json
+
 
 class Product(Resource):
     
@@ -12,16 +15,14 @@ class Product(Resource):
         product_querry = PRODUCTS.get(PRODUCTS.id == product_id) 
         product = model_to_dict(product_querry)
 
-        # Lưu thông tin vào Redis
-        r.set(f"product_{product_id}", str(product))
+        # # Lưu thông tin vào Redis
+        # r.set(f"product_{product_id}", str(product))
         
         
         # # Gửi thông tin vào topic kafka
-        producer.send(
-            config.TOPIC_KAFKA, r.get(f"product_{product_id}")
-        )
-
-
+        # producer.send(
+        #     config.TOPIC_KAFKA, r.get(f"product_{product_id}")
+        # )
         return jsonify({'data': product})
     
     
@@ -44,9 +45,27 @@ class Product(Resource):
 
 class ProductList(Resource):
     def get(self):
-        list_product = PRODUCTS.select()
-        dataDict = list(list_product.dicts())    
-        return jsonify({'data': dataDict})
+
+        products = r.get('products')
+        if products:
+            logger.info("Load from redis")
+            return json.loads(products)
+        else:
+            logger.info("Load from database")
+            products = PRODUCTS.select()
+            products_list = []
+            for product in products:
+                product_dict = {
+                    'id': product.id,
+                    'name': product.name,
+                    'price': float(product.price),
+                    'coffee_origin': product.coffee_origin
+                }
+                products_list.append(product_dict)
+
+            r.set('products', json.dumps(products_list))           
+            return products_list
+            
     
     def post(self):
         data = request.get_json()

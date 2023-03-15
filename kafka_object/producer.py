@@ -9,7 +9,7 @@ def json_serializer(data):
     return data
 
 sever_name = config.SERVER_KAFKA + ":" + config.PORT_KAFKA
-# print("sever_name", sever_name)
+
 logger.info(sever_name)
 producer = KafkaProducer(
         bootstrap_servers = [sever_name], 
