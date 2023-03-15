@@ -15,14 +15,11 @@ class Product(Resource):
         product_querry = PRODUCTS.get(PRODUCTS.id == product_id) 
         product = model_to_dict(product_querry)
 
-        # # Lưu thông tin vào Redis
-        # r.set(f"product_{product_id}", str(product))
-        
-        
-        # # Gửi thông tin vào topic kafka
-        # producer.send(
-        #     config.TOPIC_KAFKA, r.get(f"product_{product_id}")
-        # )
+    
+        # Gửi thông tin vào topic kafka
+        producer.send(
+            config.TOPIC_KAFKA, str(product)
+        )
         return jsonify({'data': product})
     
     
